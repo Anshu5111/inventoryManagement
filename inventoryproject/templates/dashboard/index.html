@@ -1,0 +1,80 @@
+{% extends "partials/base.html" %}
+
+{%block title%} Home Page{%endblock%}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{%if user.is_authenticated and user.is_staff and user.is_superuser %}
+
+
+{% include "partials/topnav.html" %}
+
+
+<!-- Graphs  -->
+<div class="container">
+    <div class="row my-5">
+        <div class="col-md-6 ">
+            <div class="bg-white" width="300px" height="100px">
+            <canvas id="myChart" width="300px" height="100px"></canvas>
+
+            <script>
+                const ctx = document.getElementById('myChart');
+              
+                new Chart(ctx, {
+                  type: 'pie',
+                  data: {
+                    labels: [{% for item in items%} '{{item.product.name}}', {%endfor%}],
+                    datasets: [{
+                      label: 'Orders',
+                      data: [{%for item in items%} {{item.order_quantity}},  {%endfor%}],
+                      borderWidth: 1,
+                      backgroundColor:['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange']
+                    }]
+                  },
+                  options: {
+                    scales: {
+                      y: {
+                        beginAtZero: true
+                      }
+                    }
+                  }
+                });
+              </script>
+            </div>
+        </div>
+        <div class="col-md-6 ">
+            <div class="bg-white">
+            <canvas id="myChart1" width="400" height="300"></canvas>
+
+            <script>
+                const ctx1 = document.getElementById('myChart1');
+              
+                new Chart(ctx1, {
+                  type: 'bar',
+                  data: {
+                    labels: [{% for product in products%} '{{product.name}}', {%endfor%}],
+                    datasets: [{
+                      label: 'Products',
+                      data: [{% for product in products%} {{product.quantity}}, {%endfor%}],
+                      borderWidth: 1,
+                      backgroundColor:['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange','Yellow', 'Green', 'Purple', 'Orange','Yellow']
+                    }]
+                  },
+                  options: {
+                    scales: {
+                      y: {
+                        beginAtZero: true
+                      }
+                    }
+                  }
+                });
+              </script>
+            </div>
+        </div>
+    </div>
+</div>
+{%else %}
+{% include 'dashboard/staff_index.html'%}
+<!-- GraphsEnd  -->
+{% endif %}
+{% endblock %}
